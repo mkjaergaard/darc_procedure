@@ -1,67 +1,38 @@
 #pragma once
 
-#include <boost/asio/io_service.hpp>
-#include <darc/peer.hpp>
-#include <darc/peer_service.hpp>
-#include <darc/ns_service.hpp>
+#include <darc/procedure/procedure_service__decl.hpp>
+#include <darc/procedure/local_dispatcher.hpp>
 
 namespace darc
 {
 namespace procedure
 {
 
-// fwd
-template<typename Arg, typename Result, typename Feedback>
-class client_impl;
-
-template<typename Arg, typename Result, typename Feedback>
-class server_impl;
-
-template<typename Arg, typename Result, typename Feedback>
-class local_dispatcher;
-
-// class
-class procedure_service : public boost::noncopyable, public darc::peer_service
+template<typename Argument, typename Result, typename Feedback>
+local_dispatcher<Argument, Result, Feedback>*
+procedure_service::get_dispatcher(const tag_handle& tag)
 {
-protected:
-  boost::asio::io_service& io_service_;
-  ns_service& nameserver_;
-
-public:
-  procedure_service(peer& p, boost::asio::io_service& io_service, ns_service& ns_service);
-
-protected:
-  void recv(const darc::ID& src_peer_id,
-            darc::buffer::shared_buffer data)
+  typename dispatcher_list_type::iterator elem = dispatcher_list_.find(tag->id());
+  if(elem == dispatcher_list_.end())
   {
-  }
+    boost::shared_ptr<local_dispatcher<Argument, Result, Feedback> > dispatcher
+      = boost::make_shared<local_dispatcher<Argument, Result, Feedback> >(
+	tag);
 
-  template<typename Arg, typename Result, typename Feedback>
-  local_dispatcher<Arg, Result, Feedback>* attach(client_impl<Arg, Result, Feedback>& client,
-						  const std::string& tag)
+    dispatcher_list_.insert(
+      typename dispatcher_list_type::value_type(tag->id(), dispatcher));
+
+    return dispatcher.get();
+  }
+  else
   {
-    return 0;
+    boost::shared_ptr<local_dispatcher_base> &dispatcher_base = elem->second;
+    // todo, try
+    boost::shared_ptr<local_dispatcher<Argument, Result, Feedback> > dispatcher
+      = boost::dynamic_pointer_cast<local_dispatcher<Argument, Result, Feedback> >(dispatcher_base);
+    return dispatcher.get();
   }
-
-  template<typename Arg, typename Result, typename Feedback>
-  void detach(client_impl<Arg, Result, Feedback>& client)
-  {
-  }
-
-  template<typename Arg, typename Result, typename Feedback>
-  local_dispatcher<Arg, Result, Feedback>* attach(server_impl<Arg, Result, Feedback>& client,
-						  const std::string& tag)
-  {
-    return 0;
-  }
-
-  template<typename Arg, typename Result, typename Feedback>
-  void detach(server_impl<Arg, Result, Feedback>& client)
-  {
-  }
-
-
-};
+}
 
 }
 }

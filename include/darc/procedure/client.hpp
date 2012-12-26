@@ -4,7 +4,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/signals.hpp>
 
-#include <darc/procedure/procedure_service.hpp> //fwd
+#include <darc/procedure/procedure_service__decl.hpp>
 #include <darc/procedure/local_dispatcher__fwd.hpp>
 
 #include <darc/id.hpp>
@@ -49,12 +49,13 @@ public:
   }
 
   // return a call handle
-  void call(const boost::shared_ptr<const Argument> &argument)
+  ID call(const boost::shared_ptr<const Argument> &argument)
   {
     if(dispatcher_ != 0)
     {
-      dispatcher_->call(argument);
+      return dispatcher_->call(this, argument);
     }
+    assert(false);
   }
 
 };
@@ -77,12 +78,13 @@ public:
   {
   }
 
-  void call(const boost::shared_ptr<const Argument> &arg)
+  ID call(const boost::shared_ptr<const Argument> &arg)
   {
     if(impl_.get() != 0)
     {
-      impl_->publish(arg);
+      return impl_->call(arg);
     }
+    assert(false);
   }
 
   void attach(const std::string& tag)
