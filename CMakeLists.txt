@@ -14,8 +14,7 @@ include_directories(include)
 include_directories(${catkin_INCLUDE_DIRS})
 
 add_library(darc_procedure SHARED
-  src/remote_dispatcher.cpp
-  src/message_service.cpp)
+  src/procedure_service.cpp)
 target_link_libraries(darc_procedure ${catkin_LIBRARIES})
 
 catkin_add_gtest(darc_procedure_gtest test/darc_procedure_gtest.cpp)
