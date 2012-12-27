@@ -57,7 +57,8 @@ public:
   }
 
   template<typename Arg, typename Result, typename Feedback>
-  void detach(client_impl<Arg, Result, Feedback>& client)
+  void detach(client_impl<Arg, Result, Feedback>& client,
+	      local_dispatcher<Arg, Result, Feedback>*)
   {
   }
 
@@ -73,7 +74,8 @@ public:
   }
 
   template<typename Arg, typename Result, typename Feedback>
-  void detach(server_impl<Arg, Result, Feedback>& client)
+  void detach(server_impl<Arg, Result, Feedback>& client,
+	      local_dispatcher<Arg, Result, Feedback>*)
   {
   }
 

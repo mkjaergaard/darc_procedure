@@ -21,6 +21,10 @@ protected:
   typedef std::vector<ClientType*> ClientListType;
   typedef std::map</*call*/ID, ClientType*> ActiveClientCallsType;
 
+  boost::mutex mutex_;
+
+    ClientType* active_hack_;
+
   //dispatcher_group<T> * group_;
 
   ServerType* server_;
@@ -72,43 +76,58 @@ public:
 
   ID call_from_local(ClientType* client, const boost::shared_ptr<const T_Arg> &arg)
   {
-    ID call_id = ID::create();
-    active_client_calls_.insert(typename ActiveClientCallsType::value_type(call_id,
-									   client));
+    ID call_id = ID::null();// = ID::create();
+    {
+      //boost::mutex::scoped_lock lock(mutex_);
+      //active_client_calls_.insert(typename ActiveClientCallsType::value_type(call_id,
+      //                            client));
+      active_hack_ = client;
+    }
     dispatch_call_locally(call_id, arg);
     return call_id;
   }
 
   void feedback_from_local(const ID& call_id, const boost::shared_ptr<const T_Feedback> &feedback_msg)
   {
-    typename ActiveClientCallsType::iterator item =
-      active_client_calls_.find(call_id);
-
+    typename ActiveClientCallsType::iterator item;
+    {
+      //boost::mutex::scoped_lock lock(mutex_);
+      //item = active_client_calls_.find(call_id);
+    }
+/*
     if(item == active_client_calls_.end())
     {
       beam::glog<beam::Warning>("Feedback for unknown call_id");
       return;
     }
-    else
+    else*/
     {
-      item->second->post_feedback(call_id, feedback_msg);
+      active_hack_->post_feedback(call_id, feedback_msg);
     }
   }
 
   void result_from_local(const ID& call_id, const boost::shared_ptr<const T_Feedback> &result_msg)
-  {
-    typename ActiveClientCallsType::iterator item =
-      active_client_calls_.find(call_id);
-
-    if(item == active_client_calls_.end())
+  {/*
+    typename ActiveClientCallsType::iterator item;
     {
+       boost::mutex::scoped_lock lock(mutex_);
+       item = active_client_calls_.find(call_id);
+    }
+*/
+    //if(item == active_client_calls_.end())
+/*    {
       beam::glog<beam::Warning>("Result for unknown call_id");
       return;
     }
-    else
+    else*/
     {
-      item->second->post_result(call_id, result_msg);
-      active_client_calls_.erase(item);
+
+      active_hack_->post_result(call_id, result_msg);
+      {
+         //boost::mutex::scoped_lock lock(mutex_);
+         //active_client_calls_.erase(item);
+         //active_hack_ = 0;
+      }
     }
   }
 
