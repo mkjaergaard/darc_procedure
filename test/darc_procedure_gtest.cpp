@@ -24,9 +24,24 @@ public:
   }
 };
 
-void call_handler(const darc::ID& call_id, const boost::shared_ptr<const int>& arg)
+void call_handler(const darc::ID& call_id, const boost::shared_ptr<const int>& msg,
+  darc::procedure::server<int, int, int>* server)
 {
   beam::glog<beam::Info>("Procedure Call!!!!!");
+  server->feedback(call_id, msg);
+  server->result(call_id, msg);
+  server->feedback(call_id, msg);
+  server->result(call_id, msg);
+}
+
+void feedback_handler(const darc::ID& call_id, const boost::shared_ptr<const int>& msg)
+{
+  beam::glog<beam::Info>("Feedback!!!!!");
+}
+
+void result_handler(const darc::ID& call_id, const boost::shared_ptr<const int>& msg)
+{
+  beam::glog<beam::Info>("Result!!!!!");
 }
 
 TEST_F(PubSubTest, PubSub)
@@ -40,7 +55,9 @@ TEST_F(PubSubTest, PubSub)
   my_client.attach("blip");
   my_server.attach("blip");
 
-  my_server.set_call_handler(boost::bind(&call_handler, _1, _2));
+  my_server.set_call_handler(boost::bind(&call_handler, _1, _2, &my_server));
+  my_client.set_feedback_handler(boost::bind(&feedback_handler, _1, _2));
+  my_client.set_result_handler(boost::bind(&result_handler, _1, _2));
 
   boost::shared_ptr<int> value(new int(5));
   darc::ID call_id = my_client.call(value);

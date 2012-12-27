@@ -76,7 +76,7 @@ public:
   {
     if(dispatcher_ != 0)
     {
-      return dispatcher_->feedback_from_local(this, feedback_msg);
+      return dispatcher_->feedback_from_local(call_id, feedback_msg);
     }
     assert(false);
   }
@@ -85,7 +85,7 @@ public:
   {
     if(dispatcher_ != 0)
     {
-      return dispatcher_->result_from_local(this, result_msg);
+      return dispatcher_->result_from_local(call_id, result_msg);
     }
     assert(false);
   }
@@ -117,7 +117,7 @@ public:
   {
     if(impl_.get() != 0)
     {
-      impl_->feedback(feedback_msg);
+      impl_->feedback(call_id, feedback_msg);
     }
   }
 
@@ -125,7 +125,7 @@ public:
   {
     if(impl_.get() != 0)
     {
-      impl_->result(result_msg);
+      impl_->result(call_id, result_msg);
     }
   }
 

@@ -82,7 +82,7 @@ public:
 
   void trigger_feedback(const ID& call_id, const boost::shared_ptr<const Feedback> &arg)
   {
-    call_handler_(call_id, arg);
+    feedback_handler_(call_id, arg);
   }
 
   void set_result_handler(result_functor_type handler)
