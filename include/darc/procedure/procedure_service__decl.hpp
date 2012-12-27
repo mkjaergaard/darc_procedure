@@ -47,7 +47,7 @@ protected:
 public:
   template<typename Arg, typename Result, typename Feedback>
   local_dispatcher<Arg, Result, Feedback>* attach(client_impl<Arg, Result, Feedback>& client,
-						  const std::string& tag)
+                                                  const std::string& tag)
   {
     boost::mutex::scoped_lock lock(mutex_);
     tag_handle handle = nameserver_.register_tag(nameserver_.root(), tag);

@@ -70,7 +70,7 @@ public:
     }
   }
 
-  ID call(ClientType* client, const boost::shared_ptr<const T_Arg> &arg)
+  ID call_from_local(ClientType* client, const boost::shared_ptr<const T_Arg> &arg)
   {
     ID call_id = ID::create();
     active_client_calls_.insert(typename ActiveClientCallsType::value_type(call_id,
@@ -78,6 +78,40 @@ public:
     dispatch_call_locally(call_id, arg);
     return call_id;
   }
+
+  void feedback_from_local(const ID& call_id, const boost::shared_ptr<const T_Feedback> &feedback_msg)
+  {
+    typename ActiveClientCallsType::iterator item =
+      active_client_calls_.find(call_id);
+
+    if(item == active_client_calls_.end())
+    {
+      beam::glog<beam::Warning>("Feedback for unknown call_id");
+      return;
+    }
+    else
+    {
+      item->second->post_feedback(call_id, feedback_msg);
+    }
+  }
+
+  void result_from_local(const ID& call_id, const boost::shared_ptr<const T_Feedback> &result_msg)
+  {
+    typename ActiveClientCallsType::iterator item =
+      active_client_calls_.find(call_id);
+
+    if(item == active_client_calls_.end())
+    {
+      beam::glog<beam::Warning>("Result for unknown call_id");
+      return;
+    }
+    else
+    {
+      item->second->post_result(call_id, result_msg);
+      active_client_calls_.erase(item);
+    }
+  }
+
 
 };
 

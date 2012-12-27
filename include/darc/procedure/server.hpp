@@ -5,7 +5,6 @@
 #include <boost/signals.hpp>
 
 #include <darc/procedure/procedure_service.hpp>
-#include <darc/procedure/local_dispatcher__fwd.hpp>
 
 #include <darc/id.hpp>
 
@@ -16,6 +15,11 @@ namespace darc
 namespace procedure
 {
 
+// Fwd
+template<typename, typename, typename>
+class local_dispatcher;
+
+// Class
 template<typename Argument, typename Feedback, typename Result>
 class server_impl
 {
@@ -68,6 +72,24 @@ public:
     call_handler_(call_id, arg);
   }
 
+  void feedback(const ID& call_id, const boost::shared_ptr<const Argument> &feedback_msg)
+  {
+    if(dispatcher_ != 0)
+    {
+      return dispatcher_->feedback_from_local(this, feedback_msg);
+    }
+    assert(false);
+  }
+
+  void result(const ID& call_id, const boost::shared_ptr<const Argument> &result_msg)
+  {
+    if(dispatcher_ != 0)
+    {
+      return dispatcher_->result_from_local(this, result_msg);
+    }
+    assert(false);
+  }
+
 };
 
 template<typename Argument, typename Feedback, typename Result>
@@ -91,11 +113,19 @@ public:
   {
   }
 
-  void call(const boost::shared_ptr<const Argument> &arg)
+  void feedback(const ID& call_id, const boost::shared_ptr<const Argument> &feedback_msg)
   {
     if(impl_.get() != 0)
     {
-      impl_->publish(arg);
+      impl_->feedback(feedback_msg);
+    }
+  }
+
+  void result(const ID& call_id, const boost::shared_ptr<const Argument> &result_msg)
+  {
+    if(impl_.get() != 0)
+    {
+      impl_->result(result_msg);
     }
   }
 
