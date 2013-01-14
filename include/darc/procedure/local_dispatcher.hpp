@@ -97,7 +97,7 @@ public:
 /*
     if(item == active_client_calls_.end())
     {
-      beam::glog<beam::Warning>("Feedback for unknown call_id");
+      iris::glog<iris::Warning>("Feedback for unknown call_id");
       return;
     }
     else*/
@@ -116,7 +116,7 @@ public:
 */
     //if(item == active_client_calls_.end())
 /*    {
-      beam::glog<beam::Warning>("Result for unknown call_id");
+      iris::glog<iris::Warning>("Result for unknown call_id");
       return;
     }
     else*/

@@ -27,7 +27,7 @@ public:
 void call_handler(const darc::ID& call_id, const boost::shared_ptr<const int>& msg,
   darc::procedure::server<int, int, int>* server)
 {
-  beam::glog<beam::Info>("Procedure Call!!!!!");
+  iris::glog<iris::Info>("Procedure Call!!!!!");
   server->feedback(call_id, msg);
   server->result(call_id, msg);
   server->feedback(call_id, msg);
@@ -36,12 +36,12 @@ void call_handler(const darc::ID& call_id, const boost::shared_ptr<const int>& m
 
 void feedback_handler(const darc::ID& call_id, const boost::shared_ptr<const int>& msg)
 {
-  beam::glog<beam::Info>("Feedback!!!!!");
+  iris::glog<iris::Info>("Feedback!!!!!");
 }
 
 void result_handler(const darc::ID& call_id, const boost::shared_ptr<const int>& msg)
 {
-  beam::glog<beam::Info>("Result!!!!!");
+  iris::glog<iris::Info>("Result!!!!!");
 }
 
 TEST_F(PubSubTest, PubSub)
