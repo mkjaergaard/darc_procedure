@@ -50,7 +50,7 @@ public:
                                                   const std::string& tag)
   {
     boost::mutex::scoped_lock lock(mutex_);
-    tag_handle handle = nameserver_.register_tag(nameserver_.root(), tag);
+    tag_handle handle = nameserver_.register_tag(/*nameserver_.root(),*/ tag);
     local_dispatcher<Arg, Feedback, Result>* dispatcher = get_dispatcher<Arg, Result, Feedback>(handle);
     dispatcher->attach(client);
     return dispatcher;
@@ -67,7 +67,7 @@ public:
 						  const std::string& tag)
   {
     boost::mutex::scoped_lock lock(mutex_);
-    tag_handle handle = nameserver_.register_tag(nameserver_.root(), tag);
+    tag_handle handle = nameserver_.register_tag(/*nameserver_.root(),*/ tag);
     local_dispatcher<Arg, Result, Feedback>* dispatcher = get_dispatcher<Arg, Result, Feedback>(handle);
     dispatcher->attach(server);
     return dispatcher;
