@@ -8,9 +8,11 @@ catkin_package(
   LIBRARIES darc_procedure
 )
 
+find_package(Boost COMPONENTS system signals thread)
 find_package(catkin COMPONENTS darc_common darc_ns iris)
 
 include_directories(include)
+include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${catkin_INCLUDE_DIRS})
 
 add_library(darc_procedure SHARED

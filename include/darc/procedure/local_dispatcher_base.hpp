@@ -1,5 +1,10 @@
 #pragma once
 
+namespace darc
+{
+namespace procedure
+{
+
 class local_dispatcher_base
 {
 public:
@@ -8,3 +13,6 @@ public:
   }
 
 };
+
+}
+}
